@@ -2,16 +2,16 @@
 # First Run/Boot Script - Designed For Use With Casper Suite, Filewave, Absolute Manage, Deploy Studio & First Boot PKG. Will Likely Work With Other Methods As Well.
 # Created By Gavin Pardoe - http://www.trams.co.uk - June 2015
 # Disable iCloud & Setup Assistant Prompts Created by Rich Trouton - https://derflounder.wordpress.com
-# Version 1.3 - 26/04/15
+# Version 1.3 - 25/01/16
 
-# Configure the 2 sections below as required/ needed by replacing the values after the '=' symbol. default 
-# settings have already been configured. The second section is for use with Casper Suite only and by default are not 
+# Configure the 2 sections below as required/ needed by replacing the values after the '=' symbol. default
+# settings have already been configured. The second section is for use with Casper Suite only and by default are not
 # enable or configured. DO NOT edit below the top 2 sections.
 
 ########################################################
 # Define User/Site Parameters (Edit These as Required) #
 ########################################################
-	
+
 # Sets the Name of the Log File (must have .log file extension)
 	logFileName=firstRunScript.log
 # Sets Time Zone
@@ -26,8 +26,8 @@
 	Set_Right_Mouse_Click=yes
 # Set Gate Keeper to Allow Apps Downloaded From Anywhere (anywhere to allow, anything else will maintain default setting)
 	gateKeeperAllow=anywhere
-	
-######################################################################################################	
+
+######################################################################################################
 # Casper Suite Specific Options (these only function if being used in conjunction with Casper Suite) #
 ######################################################################################################
 
@@ -39,10 +39,10 @@
 	policyCheck=no
 # Check for Polices with Custom Tiggers (replace 'none' with customer trigger to run)
 	policyTrigger=none
-	
+
 ################################# *DO NOT EDIT BELOW THIS LINE* #################################
-	
-# Create Log File and Set Variables 
+
+# Create Log File and Set Variables
 	dateTime=`/bin/date "+%Y-%m-%d %H:%M"`
 	currentUser=$(/usr/bin/whoami)
 	computerName=$(scutil --get ComputerName)
@@ -50,7 +50,7 @@
 	logFilePath=/var/log/$logFileName
 	echo "Log File Created at $logFilePath $dateTime" >> $logFilePath
 	echo "First Run Setup Script - Created by Gavin Pardoe - http://www.trams.co.uk" >> $logFilePath
-	
+
 	echo "*Starting Configuration*: $computerName: $currentUser: $dateTime" >> $logFilePath
 
 # Check for New Hardware
@@ -62,7 +62,7 @@
 		echo "Error Checking for New Hardware: exit 1 - $dateTime" >> $logFilePath
 		errorList[0]='failed'
 	fi
-	
+
 # Set Time, Date & Region Settings
 	/usr/sbin/systemsetup -settimezone "$timeZone"
 	if [[ $? == 0 ]]; then
@@ -71,7 +71,7 @@
 	else
 		echo "Time Zone Setting Failed Set to Apply: exit 1 - $dateTime" >> $logFilePath
 		errorList[1]='failed'
-	fi	
+	fi
 	/usr/sbin/systemsetup -setnetworktimeserver "$timeServer"
 	if [[ $? == 0 ]]; then
 		echo "Time Server Set to $timeServer: $dateTime" >> $logFilePath
@@ -79,7 +79,7 @@
 	else
 		echo "Time Server Setting Failed to Apply: exit 1 - $dateTime" >> $logFilePath
 		errorList[2]='failed'
-	fi	
+	fi
 	/usr/sbin/systemsetup -setusingnetworktime on
 	if [[ $? == 0 ]]; then
 		echo "Use Network Time Server Enabled: $dateTime" >> $logFilePath
@@ -87,7 +87,7 @@
 	else
 		echo "Failed to Enable Time Server: exit 1 - $dateTime" >> $logFilePath
 		errorList[3]='failed'
-	fi	
+	fi
 	defaults write /Library/Preferences/.GlobalPreferences AppleLanguages -array "en-GB"
 	if [[ $? == 0 ]]; then
 		echo "Default Language Set to British: $dateTime" >> $logFilePath
@@ -112,7 +112,7 @@
 		echo "failed to Apply Country Setting: exit 1 - $dateTime" >> $logFilePath
 		errorList[6]='failed'
 	fi
-	
+
 # System Settings
 	# Enable Mouse Right Click
 	if [[ $Set_Right_Mouse_Click == yes ]]; then
@@ -123,11 +123,11 @@
 	else
 		echo "Right Mouse Click Not Configured in Script Parameters: $dateTime" >> $logFilePath
 	fi
-	
+
 	# Enable Apple Remote Desktop
 	if [[ $Enable_ARD == yes ]]; then
-		/System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate -configure -allowAccessFor -specifiedUser	
-		if [[ $? == 0 ]]; then	
+		/System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate -configure -allowAccessFor -specifiedUser
+		if [[ $? == 0 ]]; then
 			echo "ARD Enabled for Specified User: $dateTime" >> $logFilePath
 			errorList[7]='passed'
 		else
@@ -147,8 +147,8 @@
 	fi
 	if [[ $Enable_ARD != yes ]]; then
 	echo "ARD Not Configured in Script Parameters, Defaults Will Remain: $dateTime" >> $logFilePath
-	fi	
-		
+	fi
+
 	# Enable SSH
 	/usr/sbin/systemsetup -setremotelogin on
 	if [[ $? == 0 ]]; then
@@ -158,7 +158,7 @@
 		echo "SSH Not Enabled: exit 1 - $dateTime" >> $logFilePath
 		errorList[9]='failed'
 	fi
-	
+
 	# Gatekeeper Allow From Anywhere
 	if [[ $gateKeeperAllow == anywhere ]]; then
 		/usr/sbin/spctl --master-disable
@@ -178,7 +178,7 @@
 	# Determine OS version
 	osvers=$(sw_vers -productVersion | awk -F. '{print $2}')
 	sw_vers=$(sw_vers -productVersion)
-	
+
 	# Determine OS build number
 	sw_build=$(sw_vers -buildVersion)
 
@@ -187,7 +187,7 @@
 	# for the presence of the Library/Preferences directory.
 	# If the directory is not found, it is created and then the
 	# iCloud and diagnostics pop-up settings are set to be disabled.
-	
+
 	if [[ ${osvers} -ge 7 ]]; then
 	for USER_TEMPLATE in "/System/Library/User Template"/*
 	do
@@ -227,30 +227,30 @@
 	fi
 		echo "Disabled iCloud and Setup Assistant Prompts: $dateTime" >> $logFilePath
 	
-# Casper Suite Specific Binary Commands; 
+# JAMF Binary Commands;
 	if [[ $casperOptions != on ]]; then
 		echo "Casper Suite Options not Enabled: $dateTime" >> $logFilePath
 		elif [[ $casperOptions = on ]]; then
-			 /usr/sbin/jamf recon
+			 /usr/local/jamf/bin/jamf recon
 				echo "Inventory Updated into JSS: $dateTime" >>$logFilePath
 	fi
 	if	[[ $forceMgmtJSS == yes ]]; then
-		/usr/sbin/jamf manage
+		/usr/local/jamf/bin/jamf manage
 			echo "JSS Management Framework installed: $dateTime" >>$logFilePath
-	fi	
+	fi
 	if [[ $policyCheck == yes ]]; then
-		/usr/sbin/jamf policy
+		/usr/local/jamf/bin/jamf policy
 			echo "Ran Checkin Policies: $dateTime" >>$logFilePath
 	fi
 	if [[ $policyTrigger != none ]]; then
-		/usr/sbin/jamf policy -event "$policyTrigger"
+		/usr/local/jamf/bin/jamf policy -event "$policyTrigger"
 			echo "Ran Any Policies with $policyTrigger Trigger: $dateTime" >>$logFilePat
 	fi
 	if [[ $casperOptions = on ]]; then
 			echo "Casper Suite Options Ran: $dateTime" >> $logFilePath
 	fi
-	
-# Check for Errors, Update Log and Output Exit Code to System	
+
+# Check for Errors, Update Log and Output Exit Code to System
 	if [[ ${errorList[*]} =~ failed ]] ; then
 		echo "Script Execution Unsuccessful: exit 1: : $dateTime" >> $logFilePath
 		exit 1
