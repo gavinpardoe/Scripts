@@ -10,11 +10,11 @@
 	logFilePath=/var/log/$logFileName
 
 # Checking Login Status
-if [[ "/usr/bin/fdesetup usingrecoverykey" != false ]]; then
-/usr/bin/touch "/Library/Application Support/JAMF/fvKeyUsed"
-echo "Logged in Using Recovery Key - fvKeyUsed Recipet Created: $dateTime" >> $logFilePath
-exit 0
-else
-echo "Logged in Using Password"
-exit 0
+  if [[ "/usr/bin/fdesetup usingrecoverykey" != false ]]; then
+    /usr/bin/touch "/Library/Application Support/JAMF/fvKeyUsed"
+    echo "Logged in Using Recovery Key - fvKeyUsed Recipet Created: $dateTime" >> $logFilePath
+    exit 0
+  else
+    echo "Logged in Using Password"
+    exit 0
 fi
