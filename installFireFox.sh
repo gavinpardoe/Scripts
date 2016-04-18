@@ -1,9 +1,10 @@
 #!/bin/bash
-# Download & Install Latest Version of Firefox - 7/7/2015
+# Download & Install Latest Version of Firefox - 10/4/2016
 # Will Only Install if Firefox is not Already in the Applications Folder
+# Version 2.0
 
-# Set Variables 
-fireFoxURL="https://www.mozilla.org/en-US/firefox/all/"
+# Set Variables
+fireFoxURL="http://download.mozilla.org/?product=firefox-latest&os=osx&lang=en-US"
 fireFox="/tmp/firefox.dmg"
 currentUser=$(stat -f "%Su" /dev/console)
 
@@ -18,8 +19,7 @@ if [[ $? != 0 ]]; then
 			exit 1
 		else
 			echo "Firefox not found, Downloading & Installing"
-			fireFoxDL=$(curl "$fireFoxURL" | grep -o 'https://download.mozilla.org/?product=firefox-[0-9][0-9].[0-9]-SSL&amp;os=osx&amp;lang=en-GB')
-			/usr/bin/curl -o "$fireFox" "$fireFoxDL"
+			/usr/bin/curl -L -o "$fireFox" "$fireFoxURL"
 			mount=`/usr/bin/mktemp -d /tmp/Firefox`
 			/usr/bin/hdiutil attach "$fireFox" -mountpoint "$mount" -nobrowse -noverify -noautoopen
 			cp -R /private/tmp/Firefox/Firefox.app /Applications/
@@ -33,5 +33,3 @@ if [[ $? != 0 ]]; then
 			echo "Firefox Installed Successfully"
 			exit 0
 fi
-
-
